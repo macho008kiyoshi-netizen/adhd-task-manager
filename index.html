@@ -75,18 +75,18 @@ body{
 .sec{display:none;padding:20px}.sec.active{display:block}
 /* Progress */
 .prog-card{
-  background:var(--card);border-radius:14px;padding:12px 14px;
+  background:var(--card);border-radius:16px;padding:14px 16px;
   margin-bottom:10px;border:1px solid var(--border);
 }
-.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:16px}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:17px}
 .prog-lbl{color:var(--muted)}.prog-cnt{font-weight:700;color:var(--routine)}
 .prog-track{background:var(--card2);border-radius:4px;height:8px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--routine),#00D68F);border-radius:8px;transition:width .5s ease}
-.hint{font-size:13px;color:var(--muted);padding:0 4px 8px;display:flex;align-items:center;gap:5px}
+.hint{font-size:14px;color:var(--muted);padding:0 4px 8px;display:flex;align-items:center;gap:5px}
 /* TASK ITEMS */
 .ti{
-  display:flex;align-items:flex-start;gap:12px;padding:12px 14px;
-  background:var(--card);border-radius:14px;margin-bottom:7px;
+  display:flex;align-items:flex-start;gap:14px;padding:14px 16px;
+  background:var(--card);border-radius:16px;margin-bottom:8px;
   border:1px solid var(--border);transition:all .2s;
   animation:slideIn .3s ease;position:relative;
 }
@@ -95,9 +95,9 @@ body{
 @keyframes fadeAway{to{opacity:0;transform:translateX(28px) scale(.95);max-height:0;padding:0;margin:0;overflow:hidden;border-width:0}}
 .ti.overdue{border-color:rgba(248,81,73,.35);background:linear-gradient(135deg,var(--card),#150a0a)}
 .ck{
-  width:28px;height:28px;border-radius:50%;border:2px solid var(--muted);
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--muted);
   cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  transition:all .22s;margin-top:1px;font-size:14px;color:transparent;
+  transition:all .22s;margin-top:1px;font-size:16px;color:transparent;
 }
 .ti[data-s=routine] .ck{border-color:var(--routine)}
 .ti[data-s=asap] .ck{border-color:var(--asap)}
@@ -361,22 +361,22 @@ body{
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 /* POMODORO */
 .pomo-wrap{
-  background:var(--card);border-radius:16px;padding:12px 14px;
-  margin-bottom:10px;border:1px solid var(--border);
+  background:var(--card);border-radius:18px;padding:16px 14px;
+  margin-bottom:12px;border:1px solid var(--border);
   display:flex;flex-direction:row;align-items:center;gap:10px;
 }
-.pomo-timer{font-size:36px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--purple);min-width:96px;flex-shrink:0}
-.pomo-label{font-size:14px;color:var(--muted);margin-bottom:3px}
+.pomo-timer{font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--purple);min-width:118px;flex-shrink:0}
+.pomo-label{font-size:15px;color:var(--muted);margin-bottom:4px}
 .pomo-btns{display:flex;gap:8px;flex:1}
 .pomo-btn{
   background:var(--card2);border:1px solid var(--border);border-radius:12px;
-  padding:10px 6px;color:var(--text);cursor:pointer;font-size:15px;
+  padding:11px 6px;color:var(--text);cursor:pointer;font-size:16px;
   font-family:inherit;transition:all .15s;flex:1;text-align:center;white-space:nowrap;
 }
 .pomo-btn:hover{border-color:var(--purple);color:var(--purple)}
 .pomo-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
-.pomo-dots{display:flex;gap:3px;margin-top:4px}
-.pomo-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:background .3s}
+.pomo-dots{display:flex;gap:4px;margin-top:5px}
+.pomo-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .3s}
 .pomo-dot.active{background:var(--routine)}
 /* ━━━━━━━━━━━━━━━━ SETUP WIZARD ━━━━━━━━━━━━━━━━ */
 .setup-overlay{
