@@ -52,40 +52,41 @@ body{
 .tabs{
   display:grid;grid-template-columns:repeat(4,1fr);
   background:var(--card);border-bottom:1px solid var(--border);
-  position:sticky;top:172px;z-index:99;
+  position:sticky;top:162px;z-index:99;
 }
 .tab{
-  padding:8px 2px 8px;text-align:center;cursor:pointer;
+  padding:7px 2px 7px;text-align:center;cursor:pointer;
   border-bottom:3px solid transparent;transition:all .2s;
   color:var(--muted);font-size:13px;user-select:none;
-  display:flex;flex-direction:column;align-items:center;gap:2px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
   white-space:nowrap;overflow:hidden;
 }
-.tab-ic{font-size:22px;}
+.tab-ic{font-size:20px;}
 .tab.active[data-s=routine]{border-bottom-color:var(--routine);color:var(--routine)}
 .tab.active[data-s=asap]{border-bottom-color:var(--asap);color:var(--asap)}
 .tab.active[data-s=deadline]{border-bottom-color:var(--deadline);color:var(--deadline)}
 .tab.active[data-s=someday]{border-bottom-color:var(--someday);color:var(--someday)}
+.tab-row{display:flex;align-items:center;gap:4px;font-size:13px}
 .tab-n{
-  display:inline-block;background:var(--card2);border-radius:8px;
-  padding:1px 6px;font-size:12px;margin-left:0;font-weight:700;
+  display:inline-block;background:var(--card2);border-radius:6px;
+  padding:1px 5px;font-size:12px;font-weight:700;
 }
 /* SECTIONS */
 .sec{display:none;padding:20px}.sec.active{display:block}
 /* Progress */
 .prog-card{
-  background:var(--card);border-radius:20px;padding:22px;
-  margin-bottom:16px;border:1px solid var(--border);
+  background:var(--card);border-radius:14px;padding:12px 14px;
+  margin-bottom:10px;border:1px solid var(--border);
 }
-.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:18px}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:16px}
 .prog-lbl{color:var(--muted)}.prog-cnt{font-weight:700;color:var(--routine)}
-.prog-track{background:var(--card2);border-radius:6px;height:12px;overflow:hidden}
+.prog-track{background:var(--card2);border-radius:4px;height:8px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--routine),#00D68F);border-radius:8px;transition:width .5s ease}
-.hint{font-size:15px;color:var(--muted);padding:0 4px 10px;display:flex;align-items:center;gap:6px}
+.hint{font-size:13px;color:var(--muted);padding:0 4px 8px;display:flex;align-items:center;gap:5px}
 /* TASK ITEMS */
 .ti{
-  display:flex;align-items:flex-start;gap:14px;padding:16px 16px;
-  background:var(--card);border-radius:16px;margin-bottom:10px;
+  display:flex;align-items:flex-start;gap:12px;padding:12px 14px;
+  background:var(--card);border-radius:14px;margin-bottom:7px;
   border:1px solid var(--border);transition:all .2s;
   animation:slideIn .3s ease;position:relative;
 }
@@ -94,9 +95,9 @@ body{
 @keyframes fadeAway{to{opacity:0;transform:translateX(28px) scale(.95);max-height:0;padding:0;margin:0;overflow:hidden;border-width:0}}
 .ti.overdue{border-color:rgba(248,81,73,.35);background:linear-gradient(135deg,var(--card),#150a0a)}
 .ck{
-  width:34px;height:34px;border-radius:50%;border:2px solid var(--muted);
+  width:28px;height:28px;border-radius:50%;border:2px solid var(--muted);
   cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  transition:all .22s;margin-top:2px;font-size:18px;color:transparent;
+  transition:all .22s;margin-top:1px;font-size:14px;color:transparent;
 }
 .ti[data-s=routine] .ck{border-color:var(--routine)}
 .ti[data-s=asap] .ck{border-color:var(--asap)}
@@ -360,12 +361,12 @@ body{
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 /* POMODORO */
 .pomo-wrap{
-  background:var(--card);border-radius:18px;padding:16px 14px;
-  margin-bottom:12px;border:1px solid var(--border);
+  background:var(--card);border-radius:16px;padding:12px 14px;
+  margin-bottom:10px;border:1px solid var(--border);
   display:flex;flex-direction:row;align-items:center;gap:10px;
 }
-.pomo-timer{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--purple);min-width:110px;flex-shrink:0}
-.pomo-label{font-size:15px;color:var(--muted);margin-bottom:4px}
+.pomo-timer{font-size:36px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--purple);min-width:96px;flex-shrink:0}
+.pomo-label{font-size:14px;color:var(--muted);margin-bottom:3px}
 .pomo-btns{display:flex;gap:8px;flex:1}
 .pomo-btn{
   background:var(--card2);border:1px solid var(--border);border-radius:12px;
@@ -374,8 +375,8 @@ body{
 }
 .pomo-btn:hover{border-color:var(--purple);color:var(--purple)}
 .pomo-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
-.pomo-dots{display:flex;gap:4px;margin-top:6px}
-.pomo-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background .3s}
+.pomo-dots{display:flex;gap:3px;margin-top:4px}
+.pomo-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:background .3s}
 .pomo-dot.active{background:var(--routine)}
 /* ━━━━━━━━━━━━━━━━ SETUP WIZARD ━━━━━━━━━━━━━━━━ */
 .setup-overlay{
@@ -616,16 +617,16 @@ body{
 
 <div class="tabs" id="tabs">
   <div class="tab active" data-s="routine" onclick="switchTab('routine')">
-    <span class="tab-ic">✅</span>ルーティン<span class="tab-n" id="cn-routine">0</span>
+    <span class="tab-ic">✅</span><span class="tab-row">ルーティン<span class="tab-n" id="cn-routine">0</span></span>
   </div>
   <div class="tab" data-s="asap" onclick="switchTab('asap')">
-    <span class="tab-ic">⚡</span>なる早<span class="tab-n" id="cn-asap">0</span>
+    <span class="tab-ic">⚡</span><span class="tab-row">なる早<span class="tab-n" id="cn-asap">0</span></span>
   </div>
   <div class="tab" data-s="deadline" onclick="switchTab('deadline')">
-    <span class="tab-ic">📅</span>締め切り<span class="tab-n" id="cn-deadline">0</span>
+    <span class="tab-ic">📅</span><span class="tab-row">締め切り<span class="tab-n" id="cn-deadline">0</span></span>
   </div>
   <div class="tab" data-s="someday" onclick="switchTab('someday')">
-    <span class="tab-ic">💭</span>いつか<span class="tab-n" id="cn-someday">0</span>
+    <span class="tab-ic">💭</span><span class="tab-row">いつか<span class="tab-n" id="cn-someday">0</span></span>
   </div>
 </div>
 
