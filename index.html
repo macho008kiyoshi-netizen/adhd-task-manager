@@ -121,14 +121,14 @@ body{
 .dl-tag.near{background:rgba(63,185,80,.18);color:var(--routine)}
 .dl-tag.far{background:var(--card2);color:var(--muted)}
 .ti-del{
-  background:none;border:none;color:transparent;cursor:pointer;
-  font-size:22px;padding:4px;transition:color .15s;flex-shrink:0;line-height:1;margin-top:2px;
+  background:none;border:none;color:var(--muted);opacity:0.35;cursor:pointer;
+  font-size:22px;padding:4px;transition:all .15s;flex-shrink:0;line-height:1;margin-top:2px;
 }
-.ti:hover .ti-del{color:var(--muted)}
-.ti-del:hover{color:var(--asap)!important}
-.ti-edit{background:none;border:none;color:transparent;cursor:pointer;font-size:20px;padding:4px;transition:color .15s;flex-shrink:0;line-height:1;margin-top:2px;}
-.ti:hover .ti-edit{color:var(--muted)}
-.ti-edit:hover{color:var(--purple)!important}
+.ti:hover .ti-del{opacity:1;color:var(--muted)}
+.ti-del:hover{color:var(--asap)!important;opacity:1}
+.ti-edit{background:none;border:none;color:var(--muted);opacity:0.35;cursor:pointer;font-size:20px;padding:4px;transition:all .15s;flex-shrink:0;line-height:1;margin-top:2px;}
+.ti:hover .ti-edit{opacity:1;color:var(--muted)}
+.ti-edit:hover{color:var(--purple)!important;opacity:1}
 /* Empty */
 .empty{text-align:center;padding:44px 20px;color:var(--muted)}
 .empty-ic{font-size:50px;margin-bottom:10px}
