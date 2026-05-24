@@ -126,6 +126,9 @@ body{
 }
 .ti:hover .ti-del{color:var(--muted)}
 .ti-del:hover{color:var(--asap)!important}
+.ti-edit{background:none;border:none;color:transparent;cursor:pointer;font-size:20px;padding:4px;transition:color .15s;flex-shrink:0;line-height:1;margin-top:2px;}
+.ti:hover .ti-edit{color:var(--muted)}
+.ti-edit:hover{color:var(--purple)!important}
 /* Empty */
 .empty{text-align:center;padding:44px 20px;color:var(--muted)}
 .empty-ic{font-size:50px;margin-bottom:10px}
@@ -694,6 +697,22 @@ body{
   </div>
 </div>
 
+<!-- EDIT TASK MODAL -->
+<div class="overlay" id="editOverlay" onclick="editOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">タスクを編集 <span class="modal-si" id="editMsi"></span></div>
+    <textarea id="editTaskInput" rows="3" maxlength="200"></textarea>
+    <div id="editDlField" style="display:none">
+      <div class="modal-lbl">📅 締め切り日</div>
+      <input type="date" id="editDlInput">
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-cancel" onclick="closeEditModal()">キャンセル</button>
+      <button class="btn btn-add" onclick="saveEdit()">保存 ✓</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS -->
 <div class="settings-overlay" id="settingsOverlay" onclick="settingsOverlayClick(event)">
   <div class="settings-panel">
@@ -736,6 +755,20 @@ body{
     <div class="srow">
       <div><div class="srow-lbl">🍅 ポモドーロタイマー</div><div class="srow-sub">ルーティンタブに集中タイマーを表示</div></div>
       <div class="toggle-sw" id="pomoToggleSw" onclick="togglePomoSetting()"><div class="toggle-knob"></div></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;padding:0 2px">
+      <div style="flex:1">
+        <div style="font-size:14px;color:var(--muted);margin-bottom:6px">⏱ 集中（分）</div>
+        <input type="number" id="pomoWorkInput" min="1" max="60" value="25"
+          oninput="updatePomoDuration()"
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:18px;font-family:inherit;outline:none">
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;color:var(--muted);margin-bottom:6px">☕ 休憩（分）</div>
+        <input type="number" id="pomoBreakInput" min="1" max="30" value="5"
+          oninput="updatePomoDuration()"
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:18px;font-family:inherit;outline:none">
+      </div>
     </div>
 
     <!-- Reset setup -->
@@ -820,6 +853,8 @@ function defData() {
     notifEnabled: false,
     reminderTimes: ['08:00', '21:00'],
     showPomo: true,
+    pomoWorkMin: 25,
+    pomoBreakMin: 5,
     lastMonthCheck: curMonth()
   };
 }
@@ -1248,6 +1283,7 @@ function renderRoutine() {
     <div class="ti" data-s="routine" data-id="${r.id}">
       <div class="ck" onclick="toggle('routine','${r.id}')">✓</div>
       <div class="ti-body"><div class="ti-txt">${esc(r.text)}</div></div>
+      <button class="ti-edit" onclick="openEditModal('routine','${r.id}')">✏</button>
       <button class="ti-del" onclick="delTask('routine','${r.id}')">×</button>
     </div>`).join('');
 }
@@ -1308,6 +1344,7 @@ function tiHtml(t, sec) {
       <div class="ti-txt">${esc(t.text)}</div>
       <div class="ti-meta">${meta}</div>
     </div>
+    <button class="ti-edit" onclick="openEditModal('${sec}','${t.id}')">✏</button>
     <button class="ti-del" onclick="delTask('${sec}','${t.id}')">×</button>
   </div>`;
 }
@@ -1428,6 +1465,47 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══════════════════════════════════════════════
+//  EDIT TASK MODAL
+// ═══════════════════════════════════════════════
+let editSec = null, editId = null;
+function openEditModal(sec, id) {
+  const arr = sec==='routine' ? D.routines : sec==='asap' ? D.asap : sec==='deadline' ? D.deadline : D.someday;
+  const t = arr.find(x => x.id === id);
+  if (!t) return;
+  editSec = sec; editId = id;
+  const names = { routine:'ルーティン', asap:'なる早', deadline:'締め切り', someday:'いつか' };
+  const si = document.getElementById('editMsi');
+  si.textContent = names[sec]; si.className = `modal-si ${sec}`;
+  document.getElementById('editTaskInput').value = t.text || '';
+  const dlField = document.getElementById('editDlField');
+  if (sec === 'deadline') {
+    dlField.style.display = 'block';
+    document.getElementById('editDlInput').value = t.deadline || '';
+  } else {
+    dlField.style.display = 'none';
+  }
+  document.getElementById('editOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('editTaskInput').focus(), 300);
+}
+function closeEditModal() {
+  document.getElementById('editOverlay').classList.remove('open');
+  editSec = null; editId = null;
+}
+function editOverlayClick(e) { if (e.target === document.getElementById('editOverlay')) closeEditModal(); }
+function saveEdit() {
+  const text = document.getElementById('editTaskInput').value.trim();
+  if (!text) { showToast('内容を入力してください'); return; }
+  const arr = editSec==='routine' ? D.routines : editSec==='asap' ? D.asap : editSec==='deadline' ? D.deadline : D.someday;
+  const t = arr.find(x => x.id === editId);
+  if (!t) { closeEditModal(); return; }
+  t.text = text;
+  if (editSec === 'deadline') {
+    t.deadline = document.getElementById('editDlInput').value || null;
+  }
+  save(); render(); closeEditModal(); showToast('✏ タスクを更新しました');
+}
+
+// ═══════════════════════════════════════════════
 //  TAB SWITCH
 // ═══════════════════════════════════════════════
 function switchTab(tab) {
@@ -1466,6 +1544,8 @@ function openSettings() {
   document.getElementById('notifToggle').classList.toggle('on', D.notifEnabled);
   document.getElementById('notifTimeSection').style.display = D.notifEnabled ? 'block' : 'none';
   document.getElementById('pomoToggleSw').classList.toggle('on', D.showPomo);
+  document.getElementById('pomoWorkInput').value = D.pomoWorkMin || 25;
+  document.getElementById('pomoBreakInput').value = D.pomoBreakMin || 5;
   renderTimeInputs();
   document.getElementById('settingsOverlay').classList.add('open');
 }
@@ -1566,12 +1646,23 @@ function addTimeSlot() {
 // ═══════════════════════════════════════════════
 //  POMODORO
 // ═══════════════════════════════════════════════
-let pomoRunning=false, pomoSec=25*60, pomoBreak=false, pomoCycles=0, pomoIv=null;
-const WORK=25*60, BREAK=5*60;
+let pomoRunning=false, pomoSec=null, pomoBreak=false, pomoCycles=0, pomoIv=null;
+let pomoStartTime=null, pomoStartSec=null; // for background-accurate timing
+
+function pomoWork() { return (D.pomoWorkMin||25)*60; }
+function pomoBreakDur() { return (D.pomoBreakMin||5)*60; }
+function pomoInitSec() { if(pomoSec===null) pomoSec=pomoWork(); }
+
+function calcRemaining() {
+  if (!pomoStartTime) return pomoSec;
+  return Math.max(0, pomoStartSec - Math.floor((Date.now() - pomoStartTime) / 1000));
+}
 
 function renderPomoTime() {
-  const m = Math.floor(pomoSec/60);
-  document.getElementById('pomoTimer').textContent = `${p2(m)}:${p2(pomoSec%60)}`;
+  pomoInitSec();
+  const s = pomoRunning ? calcRemaining() : pomoSec;
+  const m = Math.floor(s/60);
+  document.getElementById('pomoTimer').textContent = `${p2(m)}:${p2(s%60)}`;
   document.getElementById('pomoLabel').textContent = pomoBreak ? '☕ 休憩中…' : '集中中 🍅';
 }
 function renderPomoDots() {
@@ -1580,46 +1671,111 @@ function renderPomoDots() {
   document.getElementById('pomoDots').innerHTML = h;
 }
 
+function playPomoSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [[0,660],[0.25,880],[0.5,1100]].forEach(([t,freq]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.5, ctx.currentTime+t);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+t+0.4);
+      osc.start(ctx.currentTime+t); osc.stop(ctx.currentTime+t+0.4);
+    });
+  } catch(e) {}
+  if (navigator.vibrate) navigator.vibrate([200,100,200]);
+}
+
+function sendPomoNotif(isBreakEnd) {
+  if (Notification.permission==='granted') {
+    new Notification('🧠 タスク管理', {
+      body: isBreakEnd ? '☕ 休憩終了！集中セッションを始めましょう' : '🍅 集中タイム完了！お疲れ様でした',
+      tag: 'pomo'
+    });
+  }
+}
+
+function pomoFinished() {
+  playPomoSound();
+  const wasBreak = pomoBreak;
+  if (!pomoBreak) {
+    pomoCycles++;
+    if (pomoCycles >= 4) {
+      pomoCycles = 0; pomoBreak = false; pomoSec = pomoWork();
+      showToast('🎉 4ポモドーロ完了！'); addXP(30);
+    } else {
+      pomoBreak = true; pomoSec = pomoBreakDur();
+      showToast(`☕ ${D.pomoBreakMin||5}分休憩！`);
+    }
+  } else {
+    pomoBreak = false; pomoSec = pomoWork();
+    showToast('🍅 次の集中セッション！');
+  }
+  sendPomoNotif(wasBreak);
+  renderPomoTime(); renderPomoDots();
+}
+
+function pomoTick() {
+  const rem = calcRemaining();
+  pomoSec = rem;
+  renderPomoTime(); renderPomoDots();
+  if (rem <= 0) {
+    clearInterval(pomoIv); pomoRunning = false; pomoStartTime = null;
+    document.getElementById('pomoStartBtn').classList.remove('active');
+    document.getElementById('pomoStartBtn').textContent = '▶ 開始';
+    pomoFinished();
+  }
+}
+
 function pomoToggle() {
+  pomoInitSec();
   if (pomoRunning) {
-    clearInterval(pomoIv); pomoRunning = false;
+    pomoSec = calcRemaining();
+    clearInterval(pomoIv); pomoRunning = false; pomoStartTime = null;
     document.getElementById('pomoStartBtn').textContent = '▶ 再開';
     document.getElementById('pomoStartBtn').classList.remove('active');
   } else {
+    if (Notification.permission==='default') Notification.requestPermission();
     pomoRunning = true;
+    pomoStartTime = Date.now();
+    pomoStartSec = pomoSec;
     document.getElementById('pomoStartBtn').textContent = '⏸ 停止';
     document.getElementById('pomoStartBtn').classList.add('active');
-    pomoIv = setInterval(() => {
-      pomoSec--;
-      if (pomoSec <= 0) {
-        clearInterval(pomoIv); pomoRunning = false;
-        document.getElementById('pomoStartBtn').classList.remove('active');
-        document.getElementById('pomoStartBtn').textContent = '▶ 開始';
-        if (!pomoBreak) {
-          pomoCycles++;
-          if (pomoCycles >= 4) {
-            pomoCycles = 0; pomoBreak = false; pomoSec = WORK;
-            showToast('🎉 4ポモドーロ完了！'); addXP(30);
-          } else {
-            pomoBreak = true; pomoSec = BREAK;
-            showToast('☕ 5分休憩！');
-          }
-        } else {
-          pomoBreak = false; pomoSec = WORK;
-          showToast('🍅 次のセッション開始！');
-        }
-        if (D.notifEnabled && Notification.permission==='granted')
-          new Notification('🧠 タスク管理', { body: pomoBreak ? '休憩終了！集中セッションへ' : '集中タイム完了！休憩しましょう' });
-      }
-      renderPomoTime(); renderPomoDots();
-    }, 1000);
+    pomoIv = setInterval(pomoTick, 500);
   }
 }
+
 function pomoReset() {
-  clearInterval(pomoIv); pomoRunning = false; pomoSec = WORK; pomoBreak = false;
+  clearInterval(pomoIv); pomoRunning = false;
+  pomoSec = pomoWork(); pomoBreak = false; pomoStartTime = null;
   document.getElementById('pomoStartBtn').textContent = '▶ 開始';
   document.getElementById('pomoStartBtn').classList.remove('active');
   renderPomoTime(); renderPomoDots();
+}
+
+// バックグラウンドから戻った時に正確な残り時間を再計算
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && pomoRunning) {
+    const rem = calcRemaining();
+    if (rem <= 0) {
+      pomoSec = 0; pomoTick();
+    } else {
+      pomoSec = rem; renderPomoTime();
+    }
+  }
+});
+
+function updatePomoDuration() {
+  const w = parseInt(document.getElementById('pomoWorkInput').value)||25;
+  const b = parseInt(document.getElementById('pomoBreakInput').value)||5;
+  D.pomoWorkMin = Math.max(1, Math.min(60, w));
+  D.pomoBreakMin = Math.max(1, Math.min(30, b));
+  save();
+  if (!pomoRunning) {
+    pomoSec = pomoBreak ? pomoBreakDur() : pomoWork();
+    renderPomoTime();
+  }
 }
 function togglePomoVisible() {
   D.showPomo = !D.showPomo; save();
@@ -1639,6 +1795,7 @@ function initApp() {
   const hh = document.getElementById('hdr').offsetHeight;
   document.getElementById('tabs').style.top = hh + 'px';
   document.getElementById('pomoWrap').style.display = D.showPomo ? 'flex' : 'none';
+  pomoSec = pomoWork(); // D.pomoWorkMin が読み込まれた後に初期化
   renderPomoTime(); renderPomoDots();
   if (D.notifEnabled && Notification.permission === 'granted') scheduleNotifs();
   render();
