@@ -1754,6 +1754,18 @@ function pomoReset() {
   renderPomoTime(); renderPomoDots();
 }
 
+// バックグラウンドから戻った時に日付変更チェック＆ルーティンリフレッシュ
+let _lastDate = today();
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    const nowDate = today();
+    if (nowDate !== _lastDate) {
+      _lastDate = nowDate;
+      render(); // 日付が変わっていたら全体を再描画
+    }
+  }
+});
+
 // バックグラウンドから戻った時に正確な残り時間を再計算
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && pomoRunning) {
