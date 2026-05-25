@@ -68,6 +68,8 @@ body{
 .tab.active[data-s=routine]{border-bottom-color:var(--routine);color:var(--routine)}
 .tab.active[data-s=asap]{border-bottom-color:var(--asap);color:var(--asap)}
 .tab.active[data-s=deadline]{border-bottom-color:var(--deadline);color:var(--deadline)}
+@keyframes tabBlink{0%,100%{color:var(--deadline);background:rgba(240,136,62,.18)}50%{color:#fff;background:rgba(240,136,62,.45)}}
+.tab[data-s=deadline].urgent{animation:tabBlink 1s ease-in-out infinite;border-radius:10px;}
 .tab.active[data-s=someday]{border-bottom-color:var(--someday);color:var(--someday)}
 .tab-row{display:flex;align-items:center;gap:4px;font-size:28px}
 .tab-n{
@@ -1255,6 +1257,9 @@ function updateCounts() {
   document.getElementById('cn-asap').textContent = D.asap.filter(x => !x.completedAt).length;
   document.getElementById('cn-deadline').textContent = D.deadline.filter(x => !x.completedAt).length;
   document.getElementById('cn-someday').textContent = D.someday.length;
+  // 今日が締め切りの未完了タスクがあればタブを点滅
+  const hasTodayDeadline = D.deadline.some(x => !x.completedAt && x.deadline === t);
+  document.querySelector('.tab[data-s=deadline]').classList.toggle('urgent', hasTodayDeadline);
 }
 
 // ═══════════════════════════════════════════════
