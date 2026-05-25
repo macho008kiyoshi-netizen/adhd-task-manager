@@ -665,12 +665,12 @@ body{
 </div>
 
 <div class="sec" id="sec-asap">
-  <div class="hint">⚡ 完了すると取り消し線が入ります。月末にリセット</div>
+  <div class="hint">⚡ 完了すると取り消し線が入ります。未完了は翌月も残ります</div>
   <div id="asap-list"></div>
 </div>
 
 <div class="sec" id="sec-deadline">
-  <div class="hint">📅 締め切り順で表示。完了は取り消し線→月末にリセット</div>
+  <div class="hint">📅 締め切り順で表示。未完了は翌月も残ります</div>
   <div id="deadline-list"></div>
 </div>
 
@@ -1093,7 +1093,7 @@ function monthlyReset() {
   D.deadline = D.deadline.filter(t => !t.completedAt);
   D.lastMonthCheck = curMonth();
   save();
-  showToast('🗂 月が変わりました。完了タスクをリセットしました');
+  showToast('🗂 月が変わりました。完了済みタスクを消去しました（未完了は継続）');
 }
 
 // ═══════════════════════════════════════════════
@@ -1295,7 +1295,7 @@ function renderAsap() {
   const done = D.asap.filter(t => t.completedAt);
   let html = active.map(t => tiHtml(t,'asap')).join('');
   if (done.length > 0) {
-    html += `<div class="divider"></div><div class="done-note">✓ ${done.length}件完了済み（月末にリセット）</div>`;
+    html += `<div class="divider"></div><div class="done-note">✓ ${done.length}件完了済み（月末に消去）</div>`;
     html += done.map(t => tiHtml(t,'asap')).join('');
   }
   el.innerHTML = html;
@@ -1311,7 +1311,7 @@ function renderDeadline() {
   const done = D.deadline.filter(t => t.completedAt);
   let html = active.map(t => tiHtml(t,'deadline')).join('');
   if (done.length > 0) {
-    html += `<div class="divider"></div><div class="done-note">✓ ${done.length}件完了済み（月末にリセット）</div>`;
+    html += `<div class="divider"></div><div class="done-note">✓ ${done.length}件完了済み（月末に消去）</div>`;
     html += done.map(t => tiHtml(t,'deadline')).join('');
   }
   el.innerHTML = html;
